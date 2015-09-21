@@ -1,4 +1,4 @@
-package algorithms_coursera;
+
 
 public class UF {
 	private int[] id;

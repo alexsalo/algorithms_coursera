@@ -1,4 +1,4 @@
-package algorithms_coursera;
+
 
 public class WeightedUF {
 	private int[] id;
