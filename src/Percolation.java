@@ -88,6 +88,7 @@ public class Percolation {
     }
 
     private void drawGrid() {
+        StdDraw.setCanvasSize(1200, 1200);
         StdDraw.setXscale(-1, N);
         StdDraw.setYscale(-1, N);
         int x = N / 2;
