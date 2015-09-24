@@ -10,6 +10,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private int dataPos;
     private Item[] data;
 
+    @SuppressWarnings("unchecked")
     public RandomizedQueue() {
         data = (Item[]) new Object[INIT_CAPACITY];
         dataPos = 0;
@@ -33,6 +34,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         N++;
     }
 
+    @SuppressWarnings("unchecked")
     private void resize(int capacity) { // ~N
         Item[] newdata = (Item[]) new Object[capacity];
         int pos = 0;
@@ -83,6 +85,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         private int cnt;
         private Item[] randomdata;
 
+        @SuppressWarnings("unchecked")
         public RandomArrayIterator() {
             cnt = 0;
 
