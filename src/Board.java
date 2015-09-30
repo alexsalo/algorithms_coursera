@@ -58,10 +58,10 @@ public class Board {
                         // blocks
     {
         int[][] newboard = cloneBoard();
-        if (newboard[1][1] != 0)
-            exch(newboard, 0, 0, 1, 1);
-        else
-            exch(newboard, 0, 0, 2, 1);
+        int newi = 0;
+        if (zi == 0)
+            newi = 1;
+        exch(newboard, newi, 0, newi, 1);
         return new Board(newboard);
     }
 
@@ -69,7 +69,7 @@ public class Board {
     {
         if (y == null)
             return false;
-        if (y.getClass() != Board.class)
+        if (y.getClass() != this.getClass())
             return false;
 
         int[][] b = ((Board) y).board;

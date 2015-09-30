@@ -61,11 +61,12 @@ public class Solver {
         if (!isSolvable())
             return null;
         Stack<Board> stack = new Stack<Board>();
-        while (solution.prev != null) {
-            stack.push(solution.board);
-            solution = solution.prev;
+        SearchNode node = solution;
+        while (node.prev != null) {
+            stack.push(node.board);
+            node = node.prev;
         }
-        stack.push(solution.board);
+        stack.push(node.board);
         return stack;
     }
 

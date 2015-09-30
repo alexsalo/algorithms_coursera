@@ -1,16 +1,17 @@
+package structures;
 import java.util.NoSuchElementException;
 
-public class MinPQ<Key extends Comparable<Key>> {
+public class MaxPQ<Key extends Comparable<Key>> {
     private static final int INIT_CAPACITY = 2;
     private Key[] pq; // numbering from 1
     private int N;
     
-    public MinPQ(){
+    public MaxPQ(){
         this(INIT_CAPACITY);
     }
     
     @SuppressWarnings("unchecked")
-    private MinPQ(int capacity){
+    private MaxPQ(int capacity){
         pq = (Key[]) new Comparable[capacity + 1];
     }
     
@@ -25,7 +26,7 @@ public class MinPQ<Key extends Comparable<Key>> {
     }
 
     // ~lgN
-    public Key delMin() {
+    public Key delMax() {
         if (N == 0) throw new NoSuchElementException();
         Key max = pq[1]; // save max
         exch(1, N--); // put last key on top
@@ -33,7 +34,7 @@ public class MinPQ<Key extends Comparable<Key>> {
         pq[N + 1] = null; // prevent loitering
         if ((N > 0) && (N == (pq.length - 1) / 4))
             resize(pq.length / 2);
-        assert isMinHeap();
+        assert isMaxHeap();
         return max;
     }
 
@@ -42,14 +43,14 @@ public class MinPQ<Key extends Comparable<Key>> {
             resize(2 * pq.length);
         pq[++N] = x;
         swim(N);
-        assert isMinHeap();
+        assert isMaxHeap();
     }
 
     public boolean isEmpty() {
         return N == 0;
     }
 
-    public Key min() {
+    public Key max() {
         return pq[1];
     }
 
@@ -65,11 +66,11 @@ public class MinPQ<Key extends Comparable<Key>> {
             int j = 2 * k;
 
             // choose larger kid if right one exists
-            if (j < N && more(j, j + 1))
+            if (j < N && less(j, j + 1))
                 j++;
 
             // if larger kid is no bigger than father - done here
-            if (!more(k, j))
+            if (!less(k, j))
                 break;
 
             // otherwise - exch
@@ -80,28 +81,28 @@ public class MinPQ<Key extends Comparable<Key>> {
 
     private void swim(int k) {
         // while parent exists and it's smaller than the kid - exch
-        while (k > 1 && more(k / 2, k)) {
+        while (k > 1 && less(k / 2, k)) {
             exch(k, k / 2);
             k = k / 2;
         }
     }
     
-    private boolean isMinHeap(){
-        return isMinHeap(1);
+    private boolean isMaxHeap(){
+        return isMaxHeap(1);
     }
     
-    private boolean isMinHeap(int k){
+    private boolean isMaxHeap(int k){
         if (k > N) return true; // border case
         int left = 2 * k;
         int right = left + 1;
-        if (left <= N && more(k, left)) return false;
-        if (right <= N && more(k, right)) return false;
-        return isMinHeap(left) && isMinHeap(right);
+        if (left <= N && less(k, left)) return false;
+        if (right <= N && less(k, right)) return false;
+        return isMaxHeap(left) && isMaxHeap(right);
     }
     
     // Helpers to deal with the array
-    private boolean more(int i, int j) {
-        return pq[i].compareTo(pq[j]) > 0;
+    private boolean less(int i, int j) {
+        return pq[i].compareTo(pq[j]) < 0;
     }
 
     private void exch(int i, int j) {
@@ -126,7 +127,7 @@ public class MinPQ<Key extends Comparable<Key>> {
     }
 
     public static void main(String[] args) {
-        MinPQ<String> pq = new MinPQ<String>();
+        MaxPQ<String> pq = new MaxPQ<String>();
         pq.insert("alex");
         pq.insert("stacey");
         pq.insert("vasek");
@@ -135,10 +136,9 @@ public class MinPQ<Key extends Comparable<Key>> {
         pq.insert("sarah");
         pq.insert("forrest");
         System.out.println(pq);
-        System.out.println(pq.delMin());
+        System.out.println(pq.delMax());
         System.out.println();
         System.out.println(pq);
     }
 
 }
-
