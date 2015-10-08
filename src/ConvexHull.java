@@ -14,12 +14,12 @@ import edu.princeton.cs.algs4.StdDraw;
  */
 public class ConvexHull {
     Stack<Point> hull;
-    
-    public ConvexHull(Point[] points){
+
+    public ConvexHull(Point[] points) {
         hull = grahamScan(points);
     }
-    
-    public Point[] hull(){
+
+    public Point[] hull() {
         Point[] pp = new Point[hull.size()];
         pp = hull.toArray(pp);
         return pp;
@@ -27,17 +27,26 @@ public class ConvexHull {
 
     private Stack<Point> grahamScan(Point[] points) {
         Stack<Point> hull = new Stack<>();
+        // choose the lowest point to begin
         Arrays.sort(points, Point.YOrder());
+        
+        // sort by polar theta
         Arrays.sort(points, points[0].polarOrder());
 
+        /*for (int i = 0; i < points.length; i++)
+            System.out.println(points[0].angleTo(points[i]));*/
+
+        // first to points are leading ccw for sure
         hull.push(points[0]);
         hull.push(points[1]);
 
         for (int i = 2; i < points.length; i++) {
             Point top = hull.pop();
+            // while cw or collinear - unroll usless points
             while (Point.ccw(hull.peek(), top, points[i]) <= 0)
                 top = hull.pop();
 
+            // add updated ccw points
             hull.push(top);
             hull.push(points[i]);
         }

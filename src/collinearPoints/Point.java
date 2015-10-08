@@ -1,8 +1,10 @@
 package collinearPoints;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdRandom;
 
 public class Point implements Comparable<Point> {
     private static final double INFINITY = Double.POSITIVE_INFINITY;
@@ -47,9 +49,17 @@ public class Point implements Comparable<Point> {
 
         return (double) (that.y - this.y) / (that.x - this.x);
     }
+    
+    public double r(){
+        return Math.sqrt(x * x + y * y);
+    }
+    
+    public double theta(){
+        return Math.atan2(y, x);
+    }
 
     public double angleTo(Point that) {
-        return Math.atan((double) (that.y - y) / (that.x - x));
+        return Math.atan2((double) (that.y - y), (double) (that.x - x));
     }
 
     public int compareTo(Point that) {
@@ -74,14 +84,10 @@ public class Point implements Comparable<Point> {
         public int compare(Point o1, Point o2) {
             double slope1 = slopeTo(o1);
             double slope2 = slopeTo(o2);
-            if (slope1 < slope2)
-                return -1;
-            else if (slope1 > slope2)
-                return 1;
-            else
-                return 0;
+            if      (slope1 < slope2) return -1;
+            else if (slope1 > slope2) return 1;
+            else                      return 0;
         }
-
     }
 
     public Comparator<Point> polarOrder() {
@@ -93,22 +99,10 @@ public class Point implements Comparable<Point> {
         public int compare(Point o1, Point o2) {
             double angle1 = angleTo(o1);
             double angle2 = angleTo(o2);
-            // correct comparison for positive angles - always smaller than
-            // negatives
-            if (angle1 > 0 && angle2 < 0)
-                return -1;
-            if (angle1 < 0 && angle2 > 0)
-                return 1;
-
-            // if both negative - just get smaller
-            if (angle1 < angle2)
-                return -1;
-            else if (angle1 > angle2)
-                return 1;
-            else
-                return 0;
+            if (angle1 < angle2)  return -1;
+            if (angle1 > angle2)  return 1;
+            else                  return 0;
         }
-
     }
 
     public static Comparator<Point> YOrder() {
@@ -118,16 +112,9 @@ public class Point implements Comparable<Point> {
     private static class YComparator implements Comparator<Point> {
         @Override
         public int compare(Point o1, Point o2) {
-            if (o1.y < o2.y)
-                return -1;
-            else if (o1.y > o2.y)
-                return 1;
-            else if (o1.x > o2.x)
-                return -1;
-            else if (o1.x < o2.x)
-                return 1;
-            else
-                return 0;
+            if      (o1.y < o2.y) return -1;
+            else if (o1.y > o2.y) return 1;
+            else                  return 0;
         }
     }
 
@@ -136,6 +123,36 @@ public class Point implements Comparable<Point> {
     }
 
     public static void main(String[] args) {
+        int x0 = 2; //Integer.parseInt(args[0]);
+        int y0 = 2; //Integer.parseInt(args[1]);
+        int N = 100; //Integer.parseInt(args[2]);
 
+        StdDraw.setCanvasSize(800, 800);
+        StdDraw.setXscale(0, 100);
+        StdDraw.setYscale(0, 100);
+        StdDraw.setPenRadius(.005);
+        Point[] points = new Point[N];
+        for (int i = 0; i < N; i++) {
+            int x = StdRandom.uniform(100);
+            int y = StdRandom.uniform(100);
+            points[i] = new Point(x, y);
+            points[i].draw();
+        }
+
+        // draw p = (x0, x1) in red
+        Point p = new Point(x0, y0);
+        StdDraw.setPenColor(StdDraw.RED);
+        StdDraw.setPenRadius(.02);
+        p.draw();
+
+
+        // draw line segments from p to each point, one at a time, in polar order
+        StdDraw.setPenRadius();
+        StdDraw.setPenColor(StdDraw.BLUE);
+        Arrays.sort(points, p.polarOrder());
+        for (int i = 0; i < N; i++) {
+            p.drawTo(points[i]);
+            StdDraw.show(100);
+        }
     }
 }
