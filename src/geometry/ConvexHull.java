@@ -1,7 +1,7 @@
+package geometry;
 import java.util.Arrays;
 import java.util.Stack;
 
-import collinearPoints.Point;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 

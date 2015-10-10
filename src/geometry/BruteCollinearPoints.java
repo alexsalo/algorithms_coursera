@@ -1,4 +1,4 @@
-package collinearPoints;
+package geometry;
 import java.util.ArrayList;
 
 //The problem. Given a set of N distinct points in the plane, find every
