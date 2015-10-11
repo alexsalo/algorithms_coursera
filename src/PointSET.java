@@ -26,12 +26,16 @@ public class PointSET {
 
     // add the point to the set (if it is not already in the set)
     public void insert(Point2D p) {
+        if (p == null)
+            throw new NullPointerException();
         if (!points.contains(p))
             points.add(p);
     }
 
     // does the set contain point p?
     public boolean contains(Point2D p) {
+        if (p == null)
+            throw new NullPointerException();
         return points.contains(p);
     }
 
@@ -44,6 +48,8 @@ public class PointSET {
 
     // all points that are inside the rectangle
     public Iterable<Point2D> range(RectHV rect) {
+        if (rect == null)
+            throw new NullPointerException();
         ArrayList<Point2D> pp = new ArrayList<Point2D>();
         for (Point2D p : points)
             if (rect.distanceTo(p) == 0)
