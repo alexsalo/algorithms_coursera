@@ -1,3 +1,4 @@
+package kdtree;
 import java.util.ArrayList;
 
 import edu.princeton.cs.algs4.In;
@@ -29,8 +30,10 @@ public class KdTree {
         }
     }
 
-    // keeps the duplicates
+    // ignore duplicates
     public void insert(Point2D p) {
+        if (p == null)
+            throw new NullPointerException();
         root = insert(root, p, VERTICAL, null, false);
     }
 
@@ -67,20 +70,22 @@ public class KdTree {
             return new Node(p, rect);
         }
 
-        boolean cmp;
-        if (direction == VERTICAL)
-            cmp = p.x() < h.p.x();
-        else
-            cmp = p.y() < h.p.y();
+        if (!h.p.equals(p)) {
+            boolean cmp;
+            if (direction == VERTICAL)
+                cmp = p.x() < h.p.x();
+            else
+                cmp = p.y() < h.p.y();
 
-        // binary search the position
-        if (cmp)
-            h.left = insert(h.left, p, !direction, h, true);
-        else
-            h.right = insert(h.right, p, !direction, h, false);
+            // binary search the position
+            if (cmp)
+                h.left = insert(h.left, p, !direction, h, true);
+            else
+                h.right = insert(h.right, p, !direction, h, false);
 
-        // maintain size
-        h.count = 1 + size(h.left) + size(h.right);
+            // maintain size
+            h.count = 1 + size(h.left) + size(h.right);
+        }
         return h;
     }
 
@@ -91,7 +96,7 @@ public class KdTree {
 
     // number of points in the set
     public int size() {
-        return root.count;
+        return size(root);
     }
 
     private int size(Node x) {
@@ -160,13 +165,16 @@ public class KdTree {
 
         ArrayList<Point2D> points = new ArrayList<Point2D>();
 
-        // check root
-        if (rect.contains(root.p))
-            points.add(root.p);
+        if (root != null) {
+            // check root
+            if (rect.contains(root.p))
+                points.add(root.p);
 
-        // accumulate points
-        range(root.left, rect, points);
-        range(root.right, rect, points);
+            // accumulate points
+            range(root.left, rect, points);
+            range(root.right, rect, points);
+            return points;
+        }
         return points;
     }
 
@@ -184,34 +192,57 @@ public class KdTree {
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
-        Point2D closetPoint = root.p;
+        if (p == null)
+            throw new NullPointerException();
 
-        if (root != null)
-            closetPoint = minDist(root, p, closetPoint);
-
-        return closetPoint;
+        if (root != null) {            
+            Point2D closestPoint = root.p; // current champion
+            closestPoint = minDist(root, p, closestPoint, VERTICAL);
+            return closestPoint;
+        } else
+            return null;
     }
 
-    private Point2D minDist(Node h, Point2D p, Point2D closetPoint) {
-        if (p.distanceTo(closetPoint) > h.rect.distanceSquaredTo(p)) {
-            if (p.distanceTo(h.p) < p.distanceTo(closetPoint))
-                closetPoint = h.p;
+    private Point2D minDist(Node h, Point2D p, Point2D closestPoint,
+            boolean direction) {
+        if (h != null) {
+            // dist from search point to the cur rect
+            double rectDist = h.rect.distanceSquaredTo(p);
+            // min dist so far
+            double minDist = p.distanceSquaredTo(closestPoint);
+            if (minDist > rectDist) { // if cur rect can contain close point
+                // update cur champ
+                double phpDist = p.distanceSquaredTo(h.p);
+                if (phpDist < minDist) {
+                    // minDist = phpDist;
+                    closestPoint = h.p;
+                }
 
-            // check the side that contains the point first - more likely
-            // point is in there
-            if (h.left != null && h.left.rect.contains(closetPoint)) {
-                closetPoint = minDist(h.left, p, closetPoint);
-                if (h.right != null)
-                    closetPoint = minDist(h.right, p, closetPoint);
-            } else if (h.right != null) {
-                closetPoint = minDist(h.right, p, closetPoint);
-                if (h.left != null)
-                    closetPoint = minDist(h.left, p, closetPoint);
+                // which direction to compare
+                double hkey;
+                double searchKey;
+                if (direction == VERTICAL) {
+                    hkey = h.p.x();
+                    searchKey = p.x();
+                } else {
+                    hkey = h.p.y();
+                    searchKey = p.y();
+                }
+                
+                // check the side that contains the point first - more likely
+                // point is in there
+                if (searchKey <= hkey) {
+                    closestPoint = minDist(h.left, p, closestPoint, !direction);
+                    closestPoint = minDist(h.right, p, closestPoint, !direction);
+                } else {
+                    closestPoint = minDist(h.right, p, closestPoint, !direction);
+                    closestPoint = minDist(h.left, p, closestPoint, !direction);
+                }
+
+                return closestPoint;
             }
-
-            return closetPoint;
         }
-        return closetPoint;
+        return closestPoint;
     }
 
     /*
@@ -230,8 +261,9 @@ public class KdTree {
         StdDraw.setXscale();
         StdDraw.setYscale();
         KdTree d2tree = new KdTree();
-        // String filename = "kd-tree-input.txt";
-        String filename = "kdtree2.txt";
+        // String filename = "src/kdtree/data/kd-tree-input.txt";
+        String filename = "src/kdtree/data/kdtree2.txt";
+        //String filename = "src/kdtree/data/circle100.txt";
         // Scanner scanner = new Scanner(new BufferedReader(new
         // FileReader(filename)));
         In in = new In(filename);
@@ -245,6 +277,7 @@ public class KdTree {
         // System.out.println(d2tree.get(new Point2D(0.37, 0.56)));
         System.out.println(d2tree.contains(new Point2D(0.81, 0.66)));
         System.out.println(d2tree.root.left.rect);
+        System.out.println("Tree size: " + d2tree.size());
 
         d2tree.draw();
 
@@ -261,15 +294,7 @@ public class KdTree {
 
         Point2D pc = d2tree.nearest(point);
         StdDraw.setPenColor(StdDraw.GREEN);
-        point.drawTo(pc);
-
-        /*
-         * RectHV rect = new RectHV(0.2, 0.46, 0.6, 0.7);
-         * StdDraw.setPenColor(StdDraw.BLUE); rect.draw();
-         * 
-         * for (Point2D p : d2tree.range(rect)) StdDraw.filledCircle(p.x(),
-         * p.y(), 0.01);
-         */
+        point.drawTo(pc);       
 
     }
 }

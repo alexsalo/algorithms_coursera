@@ -1,4 +1,4 @@
-package simulation;
+package collision_simulation;
 
 import structures.MinPQ;
 import edu.princeton.cs.algs4.StdDraw;

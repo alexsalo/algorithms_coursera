@@ -1,4 +1,4 @@
-package simulation;
+package collision_simulation;
 
 /***************************************************************************
  *  An event during a particle collision simulation. Each event contains

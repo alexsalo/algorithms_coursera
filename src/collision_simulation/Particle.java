@@ -1,4 +1,4 @@
-package simulation;
+package collision_simulation;
 
 import java.awt.Color;
 import java.util.Random;

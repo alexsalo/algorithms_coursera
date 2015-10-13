@@ -54,8 +54,9 @@ public class ConvexHull {
     }
 
     public static void main(String[] args) {
-        // read the N points from a file
-        In in = new In(args[0]);
+        // read the N points from a file        
+        String filename = "src/geometry/data/input48.txt";
+        In in = new In(filename);
         int N = in.readInt();
         Point[] points = new Point[N];
         for (int i = 0; i < N; i++) {

@@ -1,4 +1,4 @@
-package simulation;
+package puzzle8;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.Stack;
@@ -102,7 +102,8 @@ public class Solver {
     // solve a slider puzzle (given below)
     public static void main(String[] args) {
         // create initial board from file
-        In in = new In(args[0]);
+        String filename = "src/puzzle8/data/puzzle04.txt";
+        In in = new In(filename);
         int N = in.readInt();
         int[][] blocks = new int[N][N];
         for (int i = 0; i < N; i++)

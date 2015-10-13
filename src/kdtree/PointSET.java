@@ -1,3 +1,4 @@
+package kdtree;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -59,16 +60,22 @@ public class PointSET {
 
     // a nearest neighbor in the set to point p; null if the set is empty
     public Point2D nearest(Point2D p) {
-        Point2D closetPoint = points.first();
-        double minDist = 1;
-        for (Point2D pp : points) {
-            double dist = p.distanceTo(pp);
-            if (dist < minDist) {
-                minDist = dist;
-                closetPoint = pp;
+        if (p == null)
+            throw new NullPointerException();
+
+        if (!points.isEmpty()) {
+            Point2D closetPoint = points.first();
+            double minDist = 1;
+            for (Point2D pp : points) {
+                double dist = p.distanceSquaredTo(pp);
+                if (dist < minDist) {
+                    minDist = dist;
+                    closetPoint = pp;
+                }
             }
-        }
-        return closetPoint;
+            return closetPoint;
+        } else
+            return null;
     }
 
     public static void main(String[] args) {

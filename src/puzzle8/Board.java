@@ -1,4 +1,4 @@
-package simulation;
+package puzzle8;
 import edu.princeton.cs.algs4.Stack;
 
 public class Board {

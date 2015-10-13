@@ -1,3 +1,4 @@
+package kdtree;
 /******************************************************************************
  *  Compilation:  javac RangeSearchVisualizer.java
  *  Execution:    java RangeSearchVisualizer input.txt
@@ -20,8 +21,8 @@ import edu.princeton.cs.algs4.StdDraw;
 public class RangeSearchVisualizer {
 
     public static void main(String[] args) {
-        //String filename = "kd-tree-input.txt";
-        String filename = "kdtree2.txt";
+        //String filename = "src/kdtree/data/kd-tree-input.txt";
+        String filename = "src/kdtree/data/kdtree2.txt";
         // Scanner scanner = new Scanner(new BufferedReader(new
         // FileReader(filename)));
         In in = new In(filename);
