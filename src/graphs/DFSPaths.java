@@ -4,12 +4,12 @@ import java.util.Stack;
 
 import edu.princeton.cs.algs4.In;
 
-public class Paths {
+public class DFSPaths {
     private Graph G;
     private int source;
     private Stack<Integer> path;
     
-    public Paths(Graph G, int source){
+    public DFSPaths(Graph G, int source){
         this.G = G;
         this.source = source;
     }
@@ -52,10 +52,10 @@ public class Paths {
     }
     
     public static void main(String[] args) {
-        String filename = "src/structures/data/tiny-graph.txt";
+        String filename = "src/graphs/data/tiny-graph.txt";
         In in = new In(filename);
         Graph G = new Graph(in);
-        Paths paths = new Paths(G, 1);
+        DFSPaths paths = new DFSPaths(G, 1);
         System.out.println("Path 1-3: " + paths.hasPathTo(3));
         System.out.println("Path 1-3: " + paths.pathTo(3));
         System.out.println("Path 1-7: " + paths.pathTo(7));

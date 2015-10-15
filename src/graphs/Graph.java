@@ -1,13 +1,35 @@
 package graphs;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import edu.princeton.cs.algs4.In;
 
+/*
+ *  - Bipartite (Two-Colorability problem) - is every edge connects two different types of vertex
+ *          - use DFS: on each next recursive call - assign flipped color
+ *                     and check if can reach the vertex with the same color
+ *  - Does G have a cycle? 
+ *          - use DFS: check if can dfs to itself
+ *          
+ *  - Euler tour - is there a cycle that uses each edge exatcly once? 
+ *          - iff G is connected && every v in V: deg(v) % 2 = 0 (even degree)
+ *          - to find: linear time by diligently dfsing through edges
+ *          
+ *  - Hamiltonian cycle - TSP - visit each vertex exactly once
+ *          - NP-Complete (Intractable)
+ *          
+ *  - Isomorphism - are two graphs identical
+ *          - rename each pair of nodes and check if equal: V!
+ *          - No one knows whether it's NP-C or easy problem
+ *          
+ *  - Topological flatness - no crossing edges on the plane
+ *          - Linear time ~dfs by Tarjan 1970 (very complicated)
+ */
 public class Graph {
-    Set<Integer>[] adj;
+    ArrayList<Integer>[] adj;
     int V;
     int E;
 
@@ -27,9 +49,9 @@ public class Graph {
     
     @SuppressWarnings("unchecked")
     private void initGraph(int V){
-        adj = (Set<Integer>[]) new Set[V];
+        adj = (ArrayList<Integer>[]) new ArrayList[V];
         for (int v = 0; v < V; v++)
-            adj[v] = new HashSet<Integer>();
+            adj[v] = new ArrayList<Integer>();
     }
     
     /*********************************************************************
@@ -82,7 +104,18 @@ public class Graph {
                 if (v == w)
                     cnt++;
         return cnt / 2;
-    }    
+    }   
+    
+    public boolean hasEulerTour() {
+        boolean[] marked = dfs(0, new boolean[V]);
+        for (boolean b : marked)
+            if (!b)
+                return false;
+        for (int v = 0; v < V; v++)
+            if (degree(v) % 2 != 0)
+                return false;
+        return true;
+    }
     
     /*********************************************************************
      ********************** GRAPH EXPLORATION ****************************
@@ -98,6 +131,23 @@ public class Graph {
         for (int w : adj(v))
             if (!visited[w])
                 visited = dfs(w, visited);
+        return visited;
+    }
+    
+    public void BFS(int v) {
+        boolean[] visited = new boolean[V];
+        Queue<Integer> q = new LinkedList<Integer>();
+        visited = bfs(v, visited, q);        
+        System.out.println(Arrays.toString(visited));
+    }
+    
+    private boolean[] bfs(int v, boolean[] visited, Queue<Integer> q) {
+        visited[v] = true;
+        for (int w : adj(v))
+            if (!visited[w])
+                q.add(w);
+        if (!q.isEmpty())
+            bfs(q.poll(), visited, q);
         return visited;
     }
     
@@ -117,13 +167,15 @@ public class Graph {
     }
     
     public static void main(String[] args) {
-        String filename = "src/structures/data/tiny-graph.txt";
+        String filename = "src/graphs/data/tiny-graph.txt";
         In in = new In(filename);
         Graph G = new Graph(in);
 
         System.out.println(G.toString());
         System.out.println("Max degree: " + G.maxDegree());
         G.DFS(1);
+        G.BFS(1);
+        System.out.println("Has Euler Tour: " + G.hasEulerTour());
     }
 
 }
