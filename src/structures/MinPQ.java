@@ -28,14 +28,14 @@ public class MinPQ<Key extends Comparable<Key>> {
     // ~lgN
     public Key delMin() {
         if (N == 0) throw new NoSuchElementException();
-        Key max = pq[1]; // save max
+        Key min = pq[1]; // save max
         exch(1, N--); // put last key on top
         sink(1); // sink it to where it belongs
         pq[N + 1] = null; // prevent loitering
         if ((N > 0) && (N == (pq.length - 1) / 4))
             resize(pq.length / 2);
         assert isMinHeap();
-        return max;
+        return min;
     }
 
     public void insert(Key x) {

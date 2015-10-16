@@ -13,10 +13,18 @@ import edu.princeton.cs.algs4.In;
  *  - Path finding
  *  
  *  - Topological Sort
+ *          - Precedence Scheduling For DAG directed acyclic graph
  *  
  *  - Directed Cycle Detection
+ *          - Avoid deadlocks
  * 
  *  - Strong Connectivity
+ *          - Strong connected component if there is a path from any to any.
+ *          - Reverse graph has the same connected components
+ *          - Kernel DAG: toposort and combine cc as a single node
+ *                 - no cycles since they are inside cc
+ *                 
+ *                 
  *  - PageRank - importance of web-page
  *  - Shortest Path
  */
