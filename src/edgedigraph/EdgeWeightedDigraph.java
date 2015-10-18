@@ -59,6 +59,7 @@ public class EdgeWeightedDigraph {
                 s += e.from() + " -> " + e.to() +  " (" + e.weight() + "), ";
             s += "\n";
         }
+        s+= V + " verticies, " + E + " edges.";
         return s;
     }
     
