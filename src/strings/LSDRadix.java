@@ -12,6 +12,7 @@ import edu.princeton.cs.algs4.In;
  *  ~ takes N * |N|
  */
 public class LSDRadix {
+    private static int opCount;
     
     /*
      *  ~2WN (array moves) - linear!
@@ -22,8 +23,26 @@ public class LSDRadix {
      *      
      *  How to sort (most efficiently) 1M 32 bit integers? 
      *  
+     *  Ok, so the true time complexity is:
+     *      2*W*(N + R) // 2 - for aux cost, W - # of passes, 
+     *                  // N - for each elem, R - # of buckets
+     *                  
+     *  To sort a 1M 32 bit integers:
+     *  LSD:
+     *      1  pass   of 32 bit: ~2*1*(2^20 + 2^32) = ~2^33
+     *      2  passes of 16 bit: ~2*2*(2^20 + 2^16) = ~2^22
+     *      4  passes of 8  bit: ~2*4*(2^20 + 2^8 ) = ~2^23
+     *      8  passes of 4  bit: ~2*8*(2^20 + 2^4 ) = ~2^24
+     *      16 passes of 2 bit: ~2*16*(2^20 + 2^2 ) = ~2^25
+     *      32 passes of 1 bit: ~2*32*(2^20 + 2^1 ) = ~2^26
+     *     
+     *  MergeSort:
+     *      N*lgN = 2^20 * lg(2^20) = 20 * 2^20     = ~2^24
      */
+    
     public static void sort(String[] a, int w) {
+        opCount = 0;
+        
         int R = 256;
         int N = a.length;
         String[] aux = new String[N];
@@ -48,14 +67,19 @@ public class LSDRadix {
                 char key = a[i].charAt(d); // 
                 int pos = count[key]; // where we are now for this char
                 aux[pos] = a[i]; // put string to that index
+                opCount++; // testing
                 count[key]++; // move up - eventually till next char 
                 // aux[count[a.charAt(d)]++] = a[i];
             }
             
             // N moves
-            for (int i = 0; i < N; i++) 
+            for (int i = 0; i < N; i++) {
                 a[i] = aux[i];
+                opCount++; // testing
+            }
         }
+
+        System.out.println("Exch in array (LSD): " + opCount);
     }
 
     public static void main(String[] args) {
