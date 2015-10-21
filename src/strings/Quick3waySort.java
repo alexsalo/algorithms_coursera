@@ -25,9 +25,11 @@ import edu.princeton.cs.algs4.In;
  *        
  */
 public class Quick3waySort {
+    private static final int CUTOFF =  15;   // cutoff to insertion sort
     private static int opCount;
     
     public static void sort(String[] a) {
+        
         opCount = 0;
         sort(a, 0, a.length - 1, 0);
         System.out.println("Exch in array (3WayQuick): " 
@@ -35,7 +37,12 @@ public class Quick3waySort {
     }
     
     private static void sort(String[] a, int lo, int hi, int d) {
-        if (hi <= lo) return;
+        // cutoff to insertion sort for small subarrays
+        if (hi <= lo + CUTOFF) {
+            insertionSort(a, lo, hi, d);
+            return;
+        }
+        
         int lt = lo, gt = hi; // indicies of where we now put partitioned elems
         int pivot = charAt(a[lo], d);
         int i = lo + 1; // start index
@@ -65,6 +72,16 @@ public class Quick3waySort {
         String t = a[i];
         a[i] = a[j];
         a[j] = t;
+    }
+    
+    private static void insertionSort(String[] a, int lo, int hi, int d) {
+        for (int i = 0; i <= hi; i++)
+            for (int j = i; j > lo && less(a[j], a[j-1], d); j--)
+                exch(a, j, j - 1);
+    }
+    
+    private static boolean less(String v, String w, int d) {
+        return v.substring(d).compareTo(w.substring(d)) < 0;
     }
 
     public static void main(String[] args) {

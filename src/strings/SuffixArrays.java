@@ -3,6 +3,9 @@ package strings;
 import java.text.DecimalFormat;
 
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.LRS;
+import edu.princeton.cs.algs4.Quick3string;
+import edu.princeton.cs.algs4.Stopwatch;
 
 /*
  *  Key-word-in-context search
@@ -17,35 +20,59 @@ import edu.princeton.cs.algs4.In;
  *      - Find the longest repeated substring (Bioinformatics, Crypto, Data Compression)
  *      - Find repetition in music
  *      
- *  
+ *  Problem:
+ *      - Time is a factor of longest prefix, hence with long prefixes - slow
+ *      - Bad input: if you have duplicates - you have very long prefix match
  *  
  */
 public class SuffixArrays {
     private static int opCount;
+    private static Stopwatch timer2;
     
+    /*********************************************************************
+     ************************* SUBOPTIMAL *********************************
+     ********************************************************************/    
     /*
      *  1. Build suffix arrays ~N
      *  2. Sort ~NlgN
      *  3. One scan down to compute longest common prefix
+     *  
+     *  The problem is: too much extra space
+     *  
+     *  Better Idea:
+     *      1. Sort on the first char
+     *      2. Create sorted array of suffixes by increasing size of cmp
+     *      3. Terminate if no equal elems
+     *      
      */
     public static String findLongestPrefix(String s) {
         opCount = 0;
+        int N = s.length();
         
+        // costly!
         String[] suffixArray = buildSuffixArray(s);
-        Quick3waySort.sort(suffixArray);               
+        
+        timer2 = new Stopwatch();
+        Quick3string.sort(suffixArray);
+        
+        /*for (String ss : suffixArray)
+            System.out.println(ss);*/
         
         String maxprefix = "";
-        int N = suffixArray.length;
         for (int i = 1; i < N; i++) {
             int pos = 0;
             opCount++;
-            while (pos < suffixArray[i - 1].length() && pos < suffixArray[i].length() &&
-                    suffixArray[i - 1].charAt(pos) == suffixArray[i].charAt(pos)) {
-                pos++;
-                opCount++;
-            }
-            if (pos > maxprefix.length())
-                maxprefix = suffixArray[i].substring(0, pos);
+            String a = suffixArray[i - 1];
+            String b = suffixArray[i];
+            int maxlen = maxprefix.length();
+            if (a.length() > maxlen && b.length() > maxlen)
+                while (pos < a.length() && pos < b.length() &&
+                        a.charAt(pos) == b.charAt(pos)) {
+                    pos++;
+                    opCount++;
+                }
+            if (pos > maxlen)
+                maxprefix = a.substring(0, pos);
         }        
         
         double ops = 1.0 * opCount / N;
@@ -54,6 +81,7 @@ public class SuffixArrays {
         return maxprefix;
     }
     
+    // ~N
     private static String[] buildSuffixArray(String s) {
         int N = s.length();
         String[] sa = new String[N];
@@ -62,6 +90,10 @@ public class SuffixArrays {
         return sa;
     }
     
+    
+    /*********************************************************************
+     ************************* BRUTE *********************************
+     ********************************************************************/
     public static String findLongestPrefixBrute(String s) {
         opCount = 0;
         int N = s.length();
@@ -96,18 +128,30 @@ public class SuffixArrays {
     }
 
     public static void main(String[] args) {
-        String filename = "src/strings/data/tale.txt";
+        //String filename = "src/strings/data/white-space-test.txt";
+        String filename = "src/strings/data/medTale.txt";
+        //String filename = "src/strings/data/tale.txt";
         //String filename = "src/strings/data/tinyTale.txt";
         //String filename = "src/strings/data/baylor.txt";
         In in = new In(filename);
         String string = in.readAll();
-        System.out.println(string);
+        //System.out.println(string);
         System.out.println("Length: " + string.length() + "\n-----------------");
         
+        Stopwatch timer = new Stopwatch();
         //findLongestPrefixBrute(string);
+        System.out.println(timer.elapsedTime());
         
         System.out.println();
+        timer = new Stopwatch();
         findLongestPrefix(string);
+        System.out.println("Total run time: " + timer.elapsedTime());
+        System.out.println("Run time without suffix creation: " + timer2.elapsedTime());
+        
+        System.out.println();
+        timer = new Stopwatch();
+        System.out.println(LRS.lrs(string));
+        System.out.println(timer.elapsedTime());
     }
 
 }
