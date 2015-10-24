@@ -135,31 +135,36 @@ public class SubstringSearch {
      *  -----------
      *  Scan chars in the pattern from right to left
      *  if mismatch - then skip the entire pattern length
+     *          or whatever the skip is - easy to precompute
      */
     private static int indexOfBoyerMoore(char[] text, char[]  pattern) {
-        int N = text.length, M = pattern.length, j = M - 1;
+        int N = text.length, M = pattern.length, i = M - 1, j = i;
         
-        boolean[] pat = getContent(pattern);
+        int[] skip = precomputeSkip(pattern);
         
-        for (int i = M - 1; i < N; i++) {
+        while(i < N - M) {
             int ti = i;
             while (text[ti--] == pattern[j--]) 
                 if (j == 0)
                     return i - M + 1;
             j = M - 1;
-            if (!pat[text[i]]) // if the pattern doesn't contain symbol - skip
-                i += M;
+            i += skip[text[i]] + 1; //  skip                 
         }
         return -1;
     }
     public static int indexOfBoyerMoore(String text, String pattern) {
         return indexOfBoyerMoore(text.toCharArray(), pattern.toCharArray());
     }
-    private static boolean[] getContent(char[] pattern){
-        boolean[] pat = new boolean[256];
-        for (int p = 0; p < pattern.length; p++)
-            pat[pattern[p]] = true; 
-        return pat;
+    // ~max(R, M)
+    private static int[] precomputeSkip(char[] pattern){
+        int R = 256;
+        int M = pattern.length;
+        int[] skip = new int[R];
+        for (int r = 0; r < R; r++)
+            skip[r] = M;            // default skip is the entire pattern length
+        for (int j = 0; j < M; j++) // find the max skip - so many chars needed before
+            skip[pattern[j]] = j; 
+        return skip;
     }
     
     
