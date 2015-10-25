@@ -18,6 +18,7 @@ import edu.princeton.cs.algs4.Stopwatch;
  *
  */
 public class SubstringSearch {
+    private static int opCnt;
     
     /**
      * Brute Force Substring Search
@@ -28,13 +29,15 @@ public class SubstringSearch {
      * @return index
      */
     public static int indexOfBrute(String text, String pattern) {
-        int N = text.length();
+        int N = text.length(); opCnt = 0;
         int M = pattern.length();
         for (int i = 0; i < N - M; i++) {
-            int pos = 0;
-            while (text.charAt(i + pos) == pattern.charAt(pos++)) 
+            int pos = 0; opCnt++;
+            while (text.charAt(i + pos) == pattern.charAt(pos++)) {
+                opCnt++;
                 if (pos == M)
                     return i;            
+            }
         }
         return -1;
     }    
@@ -43,13 +46,15 @@ public class SubstringSearch {
      * Doesn't guarantee the correct result
      */
     public static int indexOfBruteSkip(String text, String pattern) {
-        int N = text.length();
+        int N = text.length(); opCnt = 0;
         int M = pattern.length();
         for (int i = 0; i < N - M; i++) {
-            int pos = 0;
-            while (text.charAt(i + pos) == pattern.charAt(pos++)) 
+            int pos = 0;  opCnt++;
+            while (text.charAt(i + pos) == pattern.charAt(pos++)) {
+                opCnt++;
                 if (pos == M)
                     return i;
+            }
             i += pos - 1; // skip what we've seen
         }
         return -1;
@@ -61,13 +66,15 @@ public class SubstringSearch {
         return indexOfBruteChar(text.toCharArray(), pattern);
     }
     private static int indexOfBruteChar(char[] text, String pattern) {
-        int N = text.length;
+        int N = text.length; opCnt = 0;
         int M = pattern.length();
         for (int i = 0; i < N - M; i++) {
-            int pos = 0;
-            while (text[i + pos] == pattern.charAt(pos++)) 
+            int pos = 0;  opCnt++;
+            while (text[i + pos] == pattern.charAt(pos++)) {
+                opCnt++;
                 if (pos == M)
                     return i;            
+            }
         }
         return -1;
     }
@@ -83,12 +90,12 @@ public class SubstringSearch {
      * No memory of what the text is!
      */
     private static int indexOfKnuthMorrisPrat(char[] text, String pattern) {
-        int N = text.length;
+        int N = text.length; opCnt = 0;
         int i, j, M = pattern.length();
         int[][] dfa = compilePattern(pattern);
         // stop if N or j become a halt state
-        for (i = 0, j = 0; i < N && j < M; i++) 
-            j = dfa[text[i]][j];
+        for (i = 0, j = 0; i < N && j < M; i++) {
+            j = dfa[text[i]][j]; opCnt++;}
         // check if we stopped because of halt
         if (j == M) return i - M;
         return -1;
@@ -136,19 +143,28 @@ public class SubstringSearch {
      *  Scan chars in the pattern from right to left
      *  if mismatch - then skip the entire pattern length
      *          or whatever the skip is - easy to precompute
+     *          
+     *  ~N/M  the longer the pattern - the faster the search
+     *  Caveat: worst case = brute forst
+     *      worst: repeated pattern ABBBBBB; text BBBBBBB
+     *      
+     *  Use KMP check
      */
     private static int indexOfBoyerMoore(char[] text, char[]  pattern) {
-        int N = text.length, M = pattern.length, i = M - 1, j = i;
-        
-        int[] skip = precomputeSkip(pattern);
-        
-        while(i < N - M) {
-            int ti = i;
-            while (text[ti--] == pattern[j--]) 
-                if (j == 0)
-                    return i - M + 1;
-            j = M - 1;
-            i += skip[text[i]] + 1; //  skip                 
+        int N = text.length, M = pattern.length; opCnt = 0;
+        int[] right = precomputeSkip(pattern);
+        int skip;
+        for (int i = 0; i <= N - M; i += skip) {
+            skip = 0;
+            for (int j = M - 1; j >= 0; j--)  // check backward
+                if (text[i + j] != pattern[j]) {
+                    // 1. get skip of cur (i+j) char in txt
+                    // 2. skip j - skip
+                    skip = Math.max(1, j - right[text[i + j]]); opCnt++;
+                    break;
+                }
+            if (skip == 0) // didn't change
+                return i; // match
         }
         return -1;
     }
@@ -161,12 +177,11 @@ public class SubstringSearch {
         int M = pattern.length;
         int[] skip = new int[R];
         for (int r = 0; r < R; r++)
-            skip[r] = M;            // default skip is the entire pattern length
+            skip[r] = -1;            // no skip
         for (int j = 0; j < M; j++) // find the max skip - so many chars needed before
             skip[pattern[j]] = j; 
         return skip;
-    }
-    
+    }    
     
     /**
      * Copied from Java impl
@@ -175,13 +190,16 @@ public class SubstringSearch {
             char[] target, int targetOffset, int targetCount,
             int fromIndex) {
 
-        char first = target[targetOffset];
+        char first = target[targetOffset]; opCnt = 0;
         int max = sourceOffset + (sourceCount - targetCount);
 
         for (int i = sourceOffset + fromIndex; i <= max; i++) {
             /* Look for first character. */
+            opCnt++;
             if (source[i] != first) {
-                while (++i <= max && source[i] != first);
+                opCnt++;
+                while (++i <= max && source[i] != first)
+                    opCnt++;
             }
 
             /* Found first character, now look at the rest of v2 */
@@ -189,7 +207,8 @@ public class SubstringSearch {
                 int j = i + 1;
                 int end = j + targetCount - 1;
                 for (int k = targetOffset + 1; j < end && source[j]
-                        == target[k]; j++, k++);
+                        == target[k]; j++, k++)
+                    opCnt++;
 
                 if (j == end) {
                     /* Found whole string. */
@@ -200,16 +219,19 @@ public class SubstringSearch {
         return -1;
     }
     
-
+    private static void printStat(Stopwatch timer, int N) {
+        System.out.println(" in " + timer.elapsedTime() + 
+                " (" + opCnt + " ops; " + String.format("%.4f", 1.0*opCnt/N) + "N)");
+    }
     public static void main(String[] args) {
         Stopwatch timer;
         String filename = "src/strings/data/tale.txt";
-        //String filename = "src/strings/data/shells.txt";
+        //filename = "src/strings/data/shells.txt";
         In in = new In(filename);
         String text = in.readAll();
         //String pattern = "faltering";
         String pattern ="so well that my name"; 
-        //String pattern = "seashell";
+        //pattern = "seashell";
         
         
         HashSet<Character> set = new HashSet<Character>();
@@ -219,6 +241,10 @@ public class SubstringSearch {
         
         for (int[] row : compilePattern("ababac", 3, 97))
             System.out.println(Arrays.toString(row));
+        int N = text.length();
+        int M = pattern.length();
+        System.out.println("Text length: " + N);
+        System.out.println("Pattern length: " + M);
         
         timer = new Stopwatch();
         System.out.print("Java:       index of '"+ pattern + "': " + text.indexOf(pattern));
@@ -228,26 +254,30 @@ public class SubstringSearch {
         System.out.print("Java man  : index of '"+ pattern + "': " + 
                 indexOfJava(text.toCharArray(), 0, text.length(), 
                 pattern.toCharArray(), 0, pattern.length(), 0));
-        System.out.println(" in " + timer.elapsedTime());
+        printStat(timer, N);
         
         timer = new Stopwatch();
         System.out.print("Brute     : index of '"+ pattern + "': " + indexOfBrute(text, pattern));
-        System.out.println(" in " + timer.elapsedTime());
+        printStat(timer, N);
         
         timer = new Stopwatch();
         System.out.print("Brute Skip: index of '"+ pattern + "': " + indexOfBruteSkip(text, pattern));
-        System.out.println(" in " + timer.elapsedTime());
+        printStat(timer, N);
         
         timer = new Stopwatch();
         System.out.print("Brute Char: index of '"+ pattern + "': " + indexOfBruteChar(text, pattern));
-        System.out.println(" in " + timer.elapsedTime());
+        printStat(timer, N);
         
         timer = new Stopwatch();
         System.out.print("Knuth-Prat: index of '"+ pattern + "': " + indexOfKnuthMorrisPrat(text, pattern));
-        System.out.println(" in " + timer.elapsedTime());
+        printStat(timer, N);
         
         timer = new Stopwatch();
         System.out.print("BoyerMoore: index of '"+ pattern + "': " + indexOfBoyerMoore(text, pattern));
+        printStat(timer, N);
+        
+        timer = new Stopwatch();
+        System.out.print("Rabin-Karp: index of '"+ pattern + "': " + RabinKarp.indexOfRabinKarp(text, pattern));
         System.out.println(" in " + timer.elapsedTime());
     }
 
