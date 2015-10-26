@@ -62,6 +62,10 @@ public class Stack<T> implements Iterable<T> {
                 }
                 return null;
             }
+
+			@Override
+			public void remove() {
+			}
         };
     }
 
