@@ -62,31 +62,36 @@ import edu.princeton.cs.algs4.Stopwatch;
  */
 public class Regex {
     
-    private static Iterable<String> RegexKnuthMorrisPrat(String text, String pattern) {
+    private static Iterable<String> findByRegexp(String text, String regexp) {
         Queue<String> q = new LinkedList<String>();
+        NFA nfa = new NFA(regexp);
         int N = text.length();
-
+        int M = regexp.length();
+        for (int i = 0; i < N - M; i++) {
+            String s = text.substring(i, i + M);
+            System.out.println(s);
+            if (nfa.recognizes(s))
+                q.add(s);
+        }
         return q;
-    }
-
-    private static int[][] compilePatternWithWildCard(String pattern, int R, int shift) {
-        int M = pattern.length();
-        int[][] dfa = new int[R][M]; 
-        return dfa;
     }
 
     public static void main(String[] args) {
         Stopwatch timer;
         String filename = "src/strings/data/tale.txt";
-        //filename = "src/strings/data/shells.txt";
+        filename = "src/strings/data/shells.txt";
         In in = new In(filename);
         String text = in.readAll();
         //String pattern = "faltering";
         String pattern ="so well that my name"; 
-        //pattern = "seashell";
-        pattern = "gua..";
+        pattern = "seashell";
+        pattern = "(s(e|h)a)";
+        
+        System.out.println(text);
+        System.out.println("Length: " + text.length());
+        
         timer = new Stopwatch();
-        System.out.println(RegexKnuthMorrisPrat(text, pattern));
+        System.out.println(findByRegexp(text, pattern));
         System.out.println(timer.elapsedTime());
     }
 

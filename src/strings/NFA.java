@@ -1,6 +1,8 @@
 package strings;
 
+import java.util.Arrays;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 
 import digraphs.Digraph;
@@ -35,7 +37,37 @@ public class NFA {
      * @return Digraph representing NFA
      */
     private Digraph buildEpsilonTransitionsDigraph() {
-        
+        Digraph G = new Digraph(M + 1);
+        Stack<Integer> ops = new Stack<Integer>();
+        for (int i = 0; i < M; i++) {
+            int lp = i; // lp - left parenthesis
+            
+            // left ( or |
+            if (re[i] == '(' || re[i] == '|')
+                ops.add(i);
+            
+            // right )
+            else if (re[i] == ')') {
+                int or = ops.pop();
+                if (re[or] == '|') {
+                    lp = ops.pop();
+                    G.addEdge(lp, or + 1);
+                    G.addEdge(or, i);
+                } else // re[or] == (
+                    lp = or;                
+            }
+            
+            // closure in ahead char
+            if (i < M - 1 && re[i + 1] == '*') {
+                G.addEdge(lp, i + 1);
+                G.addEdge(i + 1, lp);
+            }
+            
+            // add all the epsilon transition to the next states
+            if (re[i] == '(' || re[i] == '*' || re[i] == ')')
+                G.addEdge(i, i + 1);
+        }
+        return G;
     }
     
     /**
@@ -96,4 +128,12 @@ public class NFA {
                 DFS(s);
     }
 
+    public String toString() {
+        return Arrays.toString(re) + G;
+    }
+    
+    public static void main(String[] args) {
+        NFA nfa = new NFA("((A*B|AC)D)");
+        System.out.println(nfa);
+    }
 }
