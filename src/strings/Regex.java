@@ -42,7 +42,7 @@ import edu.princeton.cs.algs4.Stopwatch;
  *          
  * Regex is easier to write than to read, hard to debug
  * 
- * Regex ~= DFA ~= NFA
+ * Regex ~= DFA ~= NFA (Kleene Thm)
  * 
  * Approach:
  *      - Do the same as for KMP, but use . as wildcard, use dfa
@@ -59,6 +59,12 @@ import edu.princeton.cs.algs4.Stopwatch;
  * Simulation:
  *      - after reading a char: keep the set of all the possible states of NFA
  *      - reachability with DFS from each source without unmarking ~(E + V)
+ *      
+ * If implemented inefficiently: spammer could cause DoS attack by long string to validate
+ * 
+ * KMP: string -> DFA
+ * grep:    RE -> NFA
+ * javac: code -> byte code (not regular)
  */
 public class Regex {
     
@@ -66,10 +72,12 @@ public class Regex {
         Queue<String> q = new LinkedList<String>();
         NFA nfa = new NFA(regexp);
         int N = text.length();
-        int M = regexp.length();
+        int M = 0;
+        for (char c : regexp.toCharArray())
+            if (c != '(' && c != ')' && c != '|' && c != '*')
+                M++;
         for (int i = 0; i < N - M; i++) {
             String s = text.substring(i, i + M);
-            System.out.println(s);
             if (nfa.recognizes(s))
                 q.add(s);
         }
@@ -79,13 +87,11 @@ public class Regex {
     public static void main(String[] args) {
         Stopwatch timer;
         String filename = "src/strings/data/tale.txt";
-        filename = "src/strings/data/shells.txt";
+        //filename = "src/strings/data/shells.txt";
         In in = new In(filename);
         String text = in.readAll();
-        //String pattern = "faltering";
-        String pattern ="so well that my name"; 
-        pattern = "seashell";
-        pattern = "(s(e|h)a)";
+        String pattern = "(...er)";
+        //pattern = "(s.a)";
         
         System.out.println(text);
         System.out.println("Length: " + text.length());
