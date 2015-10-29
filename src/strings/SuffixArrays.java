@@ -3,7 +3,6 @@ package strings;
 import java.text.DecimalFormat;
 
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.LRS;
 import edu.princeton.cs.algs4.Quick3string;
 import edu.princeton.cs.algs4.Stopwatch;
 
@@ -150,7 +149,7 @@ public class SuffixArrays {
         
         System.out.println();
         timer = new Stopwatch();
-        System.out.println(LRS.lrs(string));
+        //System.out.println(LRS.lrs(string));
         System.out.println(timer.elapsedTime());
     }
 

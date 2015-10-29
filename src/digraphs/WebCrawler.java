@@ -80,7 +80,8 @@ public class WebCrawler {
     public static void main(String[] args) {
         WebCrawler crawler = new WebCrawler();
         //crawler.crawl("http://www.baylor.edu");
-        crawler.crawl("http://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/");
+        //crawler.crawl("http://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/");
+        crawler.crawl(args[0]);
     }
 
 }
