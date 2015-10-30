@@ -1,6 +1,22 @@
 package dynamic_programming;
 
 public class KadaneSubarraySum {
+    
+    /**
+     * Brute ~N^2
+     */
+    public static int maxSubarraySumBrute(int[] a) {
+        int maxSum = 0;
+        for (int i = 0; i < a.length; i++) {
+            int runSum = 0;
+            for (int j = i + 1; j < a.length; j++) {
+                runSum = runSum + a[j];
+                if (runSum > maxSum)
+                    maxSum = runSum;
+            }
+        }
+        return maxSum;
+    }
 
     /**
      * Ingenious and simple algorithm. ~N
@@ -47,6 +63,7 @@ public class KadaneSubarraySum {
         int[] a = new int[] { 3, 1, -5, 2, 1, -1, 3 };
         int[] b = new int[] {-2, 1, -3, 4, -1, 2, 1, -5, 4};
         
+        System.out.println("Max: " + maxSubarraySumBrute(a));
         System.out.println("Max: " + maxSubarraySum(a));
         maxSubarrayBorders(a);
 
