@@ -1,4 +1,4 @@
-package code_prep;
+package code_prep.arrays;
 
 import java.util.Arrays;
 

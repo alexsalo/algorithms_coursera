@@ -1,4 +1,4 @@
-package code_prep;
+package code_prep.strings;
 
 import java.util.Set;
 import java.util.TreeSet;

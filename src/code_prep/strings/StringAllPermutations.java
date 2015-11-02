@@ -1,4 +1,4 @@
-package code_prep;
+package code_prep.strings;
 
 public class StringAllPermutations {
     public static int cnt;
