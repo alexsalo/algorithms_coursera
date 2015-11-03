@@ -10,6 +10,7 @@ public class RearrangeCharsInts {
         return tmp;
     }
     
+    // linear swaps
     public static void rearrange(Object[] a) {
         int N = a.length / 2;
         
@@ -31,6 +32,24 @@ public class RearrangeCharsInts {
             }
         }
     }
+    
+    /*// recursive divide and conquer
+    private static void rearrangeRecursive(Object[] a) {
+        divideAndConquer(a, 0, a.length - 1);
+    }
+    private static void divideAndConquer(Object[] a, int lo, int hi) {
+        if (lo == hi - 3)
+            exch(a, lo + 1, hi - 1);
+        else{
+            divideAndConquer(a, lo, hi / 2);
+            divideAndConquer(a, hi / 2, hi);            
+        }
+    }
+    private static void exch(Object[] a, int i, int j) {
+        Object tmp = a[i];
+        a[i] = a[j];        
+        a[j] = tmp;
+    }*/
 
     public static void main(String[] args) {
         // create array of N ints + N chars
