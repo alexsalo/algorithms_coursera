@@ -51,7 +51,7 @@ public class FindMissingNumber {
         return -1;
     }
     
-    // 3. bit vector
+    // 4. bit vector
     public static int findMissingNumberBV(int[] a) {
         int n = a.length;
         int[] bv = new int[n/32 + 1];

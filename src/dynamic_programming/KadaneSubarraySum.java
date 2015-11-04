@@ -52,7 +52,7 @@ public class KadaneSubarraySum {
             if (max > maxSum) { // update global max if
                 maxSum = max;
                 r = i;
-            }
+            } 
         }
         for (int i = l; i <= r; i++)
             System.out.print(a[i] + ", ");
@@ -62,6 +62,7 @@ public class KadaneSubarraySum {
     public static void main(String[] args) {
         int[] a = new int[] { 3, 1, -5, 2, 1, -1, 3 };
         int[] b = new int[] {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+        int[] c = new int[] {1, -3, 5, -2, 9, -8, -6, 4};
         
         System.out.println("Max: " + maxSubarraySumBrute(a));
         System.out.println("Max: " + maxSubarraySum(a));
@@ -71,5 +72,8 @@ public class KadaneSubarraySum {
         
         System.out.println("Max: " + maxSubarraySum(b));
         maxSubarrayBorders(b);
+
+        System.out.println("Max: " + maxSubarraySum(c));
+        maxSubarrayBorders(c);
     }
 }

@@ -53,7 +53,7 @@ public class ProductExceptI {
     public static int[] productExceptILinearNoExtraSpace(int[] a) {
         int N = a.length;
         int[] out = new int[N];
-        //~N
+        // ~N
         for (int i = 0; i < N; i++) 
             out[i] = 1;
 
