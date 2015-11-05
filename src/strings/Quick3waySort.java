@@ -20,7 +20,7 @@ import edu.princeton.cs.algs4.In;
  *      - regular quicksort  ~2NlnN STRING comparison 
  *              (costly for keys with long common prefixes)
  *      - 3wayChar quciksort ~2NlnN CHARS comparisons
- *              (avoid re-comparing commong prefixes)
+ *              (avoid re-comparing common prefixes)
  *      - MSD - cache inefficient + too much memory storing count[]        
  *        
  */
